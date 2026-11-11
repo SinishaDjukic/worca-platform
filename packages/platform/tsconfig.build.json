@@ -1,0 +1,17 @@
+{
+  // dist/: ESM .js and .d.ts for deployments. Wrangler's
+  // esbuild bundles it like any dependency; cloudflare:workers stays external.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    // No source maps: wrangler bundles dist/ and doesn't upload maps unless a deployment asks, and
+    // tsc's output is unminified and close to src/, so stack traces read fine without them. Maps
+    // with embedded sources tripled the package.
+    "sourceMap": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["@cloudflare/workers-types", "node"]
+  },
+  "include": ["src"]
+}

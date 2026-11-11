@@ -1,0 +1,78 @@
+name: Bug report
+description: Something in the platform doesn't work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Found a security problem? Don't file it here: email security@worca.dev, as the [security policy](https://github.com/SinishaDjukic/worca-platform/security/policy) describes.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Create an instance with …
+        2. Open …
+        3. See …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Platform version
+      description: The output of `npm ls @worca/platform` in your deployment.
+      placeholder: "@worca/platform@1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: compute
+    attributes:
+      label: Compute provider
+      options:
+        - Railway
+        - Fake (local stack)
+        - A custom provider
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where it happens
+      options:
+        - Deployed on Cloudflare
+        - Local (npm run dev)
+        - npm create @worca/platform / npm run setup
+        - From source (this repo)
+    validations:
+      required: true
+  - type: input
+    id: worca
+    attributes:
+      label: Worca version of the instance
+      description: When the problem involves an instance.
+      placeholder: "1.19.0"
+  - type: input
+    id: node
+    attributes:
+      label: Node.js and wrangler versions
+      placeholder: "node 24.5.0, wrangler 4.147.0"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Terminal output, `wrangler tail` output or the console's error. It is shown as code.
+      render: shell
+  - type: checkboxes
+    id: secrets
+    attributes:
+      label: Before you submit
+      options:
+        - label: I removed secrets, keys, tokens and account ids from everything I pasted.
+          required: true

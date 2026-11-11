@@ -1,0 +1,77 @@
+{
+  "name": "@worca/platform",
+  "version": "0.0.0",
+  "description": "The management platform for hosted Worca instances: control plane, gate and console on Cloudflare Workers, compute providers for the instances.",
+  "license": "MIT",
+  "author": "Bosch Digital EOOD, Atanas Atanasov, Emil Angelov",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SinishaDjukic/worca-platform.git",
+    "directory": "packages/platform"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./control": {
+      "types": "./dist/control.d.ts",
+      "default": "./dist/control.js"
+    },
+    "./gate": {
+      "types": "./dist/gate.d.ts",
+      "default": "./dist/gate.js"
+    },
+    "./providers": {
+      "types": "./dist/providers.d.ts",
+      "default": "./dist/providers.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "default": "./dist/testing.js"
+    },
+    "./smoke": {
+      "types": "./smoke/index.d.ts",
+      "default": "./smoke/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "worca-platform": "cli/main.mjs"
+  },
+  "files": [
+    "dist",
+    "migrations",
+    "ui",
+    "cli",
+    "smoke",
+    "stub",
+    "scripts/brand-assets.mjs",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "node scripts/build.mjs && node scripts/copy-legal.mjs"
+  },
+  "dependencies": {
+    "@better-auth/kysely-adapter": "^1.7.7",
+    "@better-auth/passkey": "^1.7.7",
+    "@better-auth/sso": "^1.7.7",
+    "better-auth": "^1.7.7",
+    "hono": "^4.13.13",
+    "jose": "^6.2.12",
+    "kysely": "^0.29.6",
+    "kysely-d1": "^0.4.0",
+    "zod": "^4.6.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}

@@ -1,0 +1,136 @@
+name: CI
+
+# Gates every pull request and every push to dev; tags are left to release-npm.yml.
+# Modelled on worca-cc's ci.yml. Pushes to other branches don't run: a branch gets CI once it has
+# a PR (a draft PR is enough). Docs-only changes skip CI (safe while no status check is required on
+# dev: a skipped workflow would otherwise leave a required check pending forever).
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "**"
+      - "!docs/**"
+  pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+
+permissions:
+  contents: read
+
+# A new push to a PR (or to dev) cancels the run it supersedes; grouped by branch and head repo so a
+# fork's same-named branch can't cancel ours.
+concurrency:
+  group: ci-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  # Type check, unit tests (vitest in workerd) and script tests on the supported range: the exact
+  # floor (package.json engines), .nvmrc's major (every other job and the release run it) and the
+  # newest LTS.
+  unit:
+    name: check + unit (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22.19.0', 24, 26]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The unit tests read the dev secrets from .dev.vars (generated, never committed).
+      - name: Dev keys
+        run: npm run keys:dev
+
+      - name: Type check
+        run: npm run check
+
+      - name: Unit and script tests
+        run: npm test
+
+  # The e2e suites (fast gate timers) and the console's Playwright tests (normal timers), each
+  # against its own local stack: both Workers in wrangler dev, the fake providers, the stub.
+  stack:
+    name: ${{ matrix.suite }} against the local stack
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: e2e
+            fast: "1"
+            run: npm run test:e2e
+          - suite: ui
+            fast: ""
+            run: npm run test:ui
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        if: matrix.suite == 'ui'
+        run: npx playwright install --with-deps chromium
+
+      - name: Start the local stack
+        env:
+          E2E_FAST: ${{ matrix.fast }}
+        run: |
+          set -euo pipefail
+          npm run keys:dev
+          nohup npm run dev > dev-stack.log 2>&1 &
+          for i in $(seq 1 120); do
+            if grep -q "ready. Ctrl-C" dev-stack.log; then exit 0; fi
+            sleep 2
+          done
+          cat dev-stack.log
+          echo "::error::the local stack did not start"
+          exit 1
+
+      - name: Run ${{ matrix.suite }}
+        env:
+          E2E_FAST: ${{ matrix.fast }}
+        run: ${{ matrix.run }}
+
+      - name: Stack log
+        if: failure()
+        run: tail -n 300 dev-stack.log
+
+  # Packs both packages, scaffolds a deployment with the packed create-platform, sets it up twice
+  # against a fake wrangler, type-checks it, dry-run deploys both Workers, runs it and smokes it.
+  package:
+    name: package (pack → scaffold → setup → dry-run → dev → smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package test
+        run: npm run test:package

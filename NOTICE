@@ -1,0 +1,14 @@
+Worca platform
+
+The source code of this project is licensed under the MIT licence (LICENSE).
+
+The Worca name, the Worca logo and the Worca mark, including the image files
+ui/assets/worca-logo-mask.png, ui/assets/worca-mark-mask.png, ui/assets/favicon.png,
+ui/assets/mail/worca-logo-light.png, ui/assets/mail/worca-logo-dark.png and the logo
+inlined in src/gate/logo.ts, identify the Worca project. They are not licensed under
+the MIT licence. You may use them to refer to Worca, and a deployment that hosts Worca
+may keep the defaults; a service offered under another name should replace them with
+its own (docs/branding.md).
+
+The fonts in ui/assets/fonts (Poppins, JetBrains Mono) are licensed under the SIL Open
+Font License 1.1 by their authors.

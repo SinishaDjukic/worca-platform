@@ -1,0 +1,4 @@
+/* A deployment's colour overrides, loaded after app.css (and pages.css) on every console and
+   server-rendered page. Empty here: the platform's defaults are in app.css. A deployment puts its
+   own in branding/theme.css, which replaces this file when its assets are built (docs/branding.md),
+   e.g. :root{--ink:#0B3D2E} or the dark-mode blocks from app.css with other values. */

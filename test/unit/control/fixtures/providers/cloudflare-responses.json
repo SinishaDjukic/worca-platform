@@ -1,0 +1,8 @@
+{
+  "tunnelCreate": { "success": true, "errors": [], "messages": [], "result": { "id": "c1744f8b-faa1-48a4-9e5c-02ac921467fa", "name": "worca-run-inst-1", "config_src": "cloudflare", "status": "inactive", "created_at": "2026-10-06T10:00:00Z" } },
+  "configurations": { "success": true, "errors": [], "messages": [], "result": { "tunnel_id": "c1744f8b-faa1-48a4-9e5c-02ac921467fa", "version": 1, "source": "cloudflare", "config": {} } },
+  "token": { "success": true, "errors": [], "messages": [], "result": "eyJhIjoiYWNjdCIsInQiOiJ0dW5uZWwiLCJzIjoic2VjcmV0In0=" },
+  "dnsCreate": { "success": true, "errors": [], "messages": [], "result": { "id": "rec-?", "type": "CNAME", "proxied": true } },
+  "deleted": { "success": true, "errors": [], "messages": [], "result": { "id": "x" } },
+  "error": { "success": false, "errors": [{ "code": 81053, "message": "An A, AAAA, or CNAME record with that host already exists." }], "messages": [], "result": null }
+}

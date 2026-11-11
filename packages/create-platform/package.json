@@ -1,0 +1,32 @@
+{
+  "name": "@worca/create-platform",
+  "version": "0.0.0",
+  "description": "Scaffolds a deployment of @worca/platform: npm create @worca/platform my-deploy",
+  "license": "MIT",
+  "author": "Bosch Digital EOOD, Atanas Atanasov, Emil Angelov",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SinishaDjukic/worca-platform.git",
+    "directory": "packages/create-platform"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "bin": {
+    "create-platform": "bin/create-platform.mjs"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "prepack": "node ../platform/scripts/copy-legal.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

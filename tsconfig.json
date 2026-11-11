@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers/types"],
+    // Inside this repo @worca/platform is its source; deployments outside get dist/ (exports map).
+    "paths": {
+      "@worca/platform": ["./packages/platform/src/index.ts"],
+      "@worca/platform/*": ["./packages/platform/src/*.ts"]
+    }
+  },
+  "include": ["packages/platform/src", "test/unit", "test/env.d.ts", "test/raw.d.ts", "dev.config.ts"]
+}

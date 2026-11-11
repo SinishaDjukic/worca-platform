@@ -1,0 +1,35 @@
+// The contributors' local stack and the unit tests (vitest pool-workers): the platform from source,
+// fake compute and edge providers, run.localhost. Generated from dev.config.ts (test/unit/shared/
+// deployment-config.test.ts checks it). Deployments generate their own (worca-platform configure).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "worca-platform-gate",
+  "main": "packages/platform/src/gate/index.ts",
+  "compatibility_date": "2026-08-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "env": {
+    "dev": {
+      "name": "worca-platform-gate-dev",
+      "vars": {
+        "ENVIRONMENT": "dev",
+        "LOCAL_DEV": "1",
+        "APP_ORIGIN": "http://app.localhost:8787",
+        "INSTANCE_DOMAIN": "run.localhost",
+        "APEX_REDIRECT_URL": "https://example.com/hosted/",
+        "ABOUT_URL": "https://example.com/hosted/",
+        "CONTACT_EMAIL": "hello@example.com",
+        "ABUSE_EMAIL": "abuse@example.com",
+        "ABUSE_URL": "https://example.com/abuse",
+        "PASS_SECONDS": "60",
+        "IDLE_SECONDS": "86400",
+        "RECHECK_SECONDS": "3600",
+        "SCHEDULE_WAKE_LEAD_SECONDS": "600"
+      },
+      "kv_namespaces": [{ "binding": "HOSTS", "id": "worca-platform-hosts-dev" }],
+      "durable_objects": { "bindings": [{ "name": "GATE_OBJECT", "class_name": "GateObject" }] },
+      "services": [{ "binding": "CONTROL", "service": "worca-platform-control-dev", "entrypoint": "ControlRpc" }]
+    }
+
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["GateObject"] }]
+}

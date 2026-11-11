@@ -1,0 +1,17 @@
+node_modules
+.wrangler
+.dev.vars*
+!.dev.vars.example
+dist
+coverage
+*.log
+.stub-state
+.secrets*.env
+.claude/worktrees/
+.mail-preview
+/packages/*/LICENSE
+/packages/*/NOTICE
+/packages/platform/dist
+.dry
+.packs
+/packages/*/THIRD_PARTY_NOTICES.md

@@ -1,0 +1,94 @@
+{
+  "projectCreate": {
+    "data": {
+      "projectCreate": {
+        "id": "proj-1",
+        "environments": {
+          "edges": [
+            {
+              "node": {
+                "id": "env-1",
+                "name": "production"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "serviceCreate": {
+    "data": {
+      "serviceCreate": {
+        "id": "svc-?",
+        "name": "worca-run-?"
+      }
+    }
+  },
+  "serviceInstanceUpdate": {
+    "data": {
+      "serviceInstanceUpdate": true
+    }
+  },
+  "serviceInstanceLimitsUpdate": {
+    "data": {
+      "serviceInstanceLimitsUpdate": true
+    }
+  },
+  "volumeCreate": {
+    "data": {
+      "volumeCreate": {
+        "id": "vol-1"
+      }
+    }
+  },
+  "variableCollectionUpsert": {
+    "data": {
+      "variableCollectionUpsert": true
+    }
+  },
+  "serviceInstanceDeployV2": {
+    "data": {
+      "serviceInstanceDeployV2": "dep-new"
+    }
+  },
+  "latestDeployment": {
+    "data": {
+      "deployments": {
+        "edges": [
+          {
+            "node": {
+              "id": "dep-latest",
+              "status": "SUCCESS",
+              "deploymentStopped": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  "deploymentStop": {
+    "data": {
+      "deploymentStop": true
+    }
+  },
+  "deploymentRedeploy": {
+    "data": {
+      "deploymentRedeploy": {
+        "id": "dep-redeployed",
+        "status": "INITIALIZING"
+      }
+    }
+  },
+  "projectDelete": {
+    "data": {
+      "projectDelete": true
+    }
+  },
+  "projectName": {
+    "data": {
+      "project": {
+        "name": "worca-run-inst-1"
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+// The contributors' local stack and the unit tests (vitest pool-workers): the platform from source,
+// fake compute and edge providers, run.localhost. Generated from dev.config.ts (test/unit/shared/
+// deployment-config.test.ts checks it). Deployments generate their own (worca-platform configure).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "worca-platform-control",
+  "main": "packages/platform/src/control/index.ts",
+  "compatibility_date": "2026-08-20",
+  "compatibility_flags": ["nodejs_compat"],
+  // The web UI (ui/): static files behind the Worker, so every response passes the session check
+  // and the security headers in auth/middleware.ts first (src/control/ui.ts).
+  "assets": { "directory": "./packages/platform/ui", "binding": "ASSETS", "run_worker_first": true, "html_handling": "none", "not_found_handling": "none" },
+  "env": {
+    "dev": {
+      "name": "worca-platform-control-dev",
+      "vars": {
+        "ENVIRONMENT": "dev",
+        "LOCAL_DEV": "1",
+        "APP_ORIGIN": "http://app.localhost:8787",
+        "INSTANCE_DOMAIN": "run.localhost",
+        "INSTANCE_ORIGIN_SUFFIX": ":8798",
+        "INSTANCE_SCHEME": "http",
+        "COMPUTE_PROVIDER": "fake",
+        "EDGE_PROVIDER": "fake",
+        "RESOURCE_PREFIX": "worca-platform-",
+        "STUB_ADMIN_URL": "http://127.0.0.1:9100",
+        "EMAIL_FROM": "Worca <no-reply@example.com>",
+        "NEWSLETTER_FROM": "Worca <news@news.example.com>",
+        "PUBLIC_FORM_ORIGINS": "http://localhost:8080",
+        "OPERATOR_NAME": "Example Hosting",
+        "WEBSITE_URL": "https://example.com",
+        "ABOUT_URL": "https://example.com/hosted/",
+        "CONTACT_EMAIL": "hello@example.com",
+        "ABUSE_EMAIL": "abuse@example.com",
+        "ABUSE_URL": "https://example.com/abuse",
+        "PRIVACY_URL": "https://example.com/privacy/",
+        "TERMS_URL": "https://example.com/terms/",
+        "LEGAL_URL": "https://example.com/legal/",
+        "FEATURES": "newsletter,accessRequests,tiers"
+      },
+      "d1_databases": [
+        { "binding": "DB", "database_name": "worca-platform-db-dev", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "packages/platform/migrations" }
+      ],
+      "kv_namespaces": [{ "binding": "KV", "id": "worca-platform-control-kv-dev" }],
+      "services": [{ "binding": "GATE", "service": "worca-platform-gate-dev", "entrypoint": "GateRpc" }],
+      "workflows": [
+        { "name": "worca-platform-instance-ops-dev", "binding": "INSTANCE_OPS", "class_name": "InstanceOpsWorkflow" },
+        { "name": "worca-platform-key-rotation-dev", "binding": "KEY_ROTATION", "class_name": "KeyRotationWorkflow" },
+        { "name": "worca-platform-newsletter-send-dev", "binding": "NEWSLETTER_SEND", "class_name": "NewsletterSendWorkflow" }
+      ],
+      "triggers": { "crons": ["*/5 * * * *", "17 3 * * *"] }
+    }
+
+  }
+}

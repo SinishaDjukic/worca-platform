@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+# No vulnerability link here: GitHub adds "Report a security vulnerability"
+# to the chooser on its own, from SECURITY.md.
+contact_links:
+  - name: Deploying your own platform
+    url: https://github.com/SinishaDjukic/worca-platform/blob/dev/docs/deploy.md
+    about: Accounts, tokens, setup and costs.
+  - name: Worca itself
+    url: https://github.com/SinishaDjukic/worca-cc/issues
+    about: Problems inside a Worca instance (runs, chat, the credential broker) go to worca-cc.

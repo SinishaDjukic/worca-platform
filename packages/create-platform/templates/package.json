@@ -1,0 +1,24 @@
+{
+  "name": "{{PACKAGE_NAME}}",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "worca-platform setup",
+    "deploy": "worca-platform deploy",
+    "dev": "worca-platform dev",
+    "smoke": "worca-platform smoke",
+    "secrets": "worca-platform secrets",
+    "admin": "worca-platform admin",
+    "upgrade": "worca-platform upgrade",
+    "configure": "worca-platform configure",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@worca/platform": "{{PLATFORM_VERSION}}"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261006.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.147.0"
+  }
+}

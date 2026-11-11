@@ -1,0 +1,38 @@
+{
+  "name": "worca-platform",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev:control": "wrangler dev -c wrangler.control.jsonc --env dev --port 8787 --persist-to .wrangler/state",
+    "dev:gate": "wrangler dev -c wrangler.gate.jsonc --env dev --port 8798 --persist-to .wrangler/state",
+    "dev:stub": "node packages/platform/stub/instance.mjs",
+    "dev": "node scripts/dev.mjs",
+    "migrate:local": "wrangler d1 migrations apply worca-platform-db-dev --local -c wrangler.control.jsonc --env dev --persist-to .wrangler/state",
+    "keys:dev": "node scripts/dev-keys.mjs",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run && npm run test:scripts",
+    "test:scripts": "node packages/platform/scripts/build.mjs && node --test 'test/scripts/*.test.mjs'",
+    "test:e2e": "node --test --test-concurrency=1 'test/e2e/*.test.mjs'",
+    "test:ui": "node --test --test-concurrency=1 'test/ui/*.test.mjs'",
+    "build": "npm run build -w @worca/platform",
+    "pack:platform": "node scripts/pack-platform.mjs",
+    "test:package": "node scripts/test-package.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20261006.1",
+    "@types/node": "^26.6.4",
+    "better-sqlite3": "^13.0.3",
+    "playwright": "^1.63.0",
+    "typescript": "^6.0.3",
+    "vitest": "~4.1",
+    "wrangler": "^4.147.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}
