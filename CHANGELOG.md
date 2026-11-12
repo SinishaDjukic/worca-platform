@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 1.0.0-rc.1
+## @worca/platform 1.0.0-rc.1, @worca/create-platform 1.0.0-rc.1
 
 The first release of the Worca platform as open source: the management platform behind hosted
 Worca (control plane, gate, console, providers), packaged for anyone to deploy on Cloudflare.

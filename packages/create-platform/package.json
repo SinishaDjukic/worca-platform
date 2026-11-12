@@ -4,6 +4,9 @@
   "description": "Scaffolds a deployment of @worca/platform: npm create @worca/platform my-deploy",
   "license": "MIT",
   "author": "Bosch Digital EOOD, Atanas Atanasov, Emil Angelov",
+  "contributors": [
+    "Worca Contributors (https://github.com/SinishaDjukic/worca-platform/graphs/contributors)"
+  ],
   "type": "module",
   "repository": {
     "type": "git",
@@ -28,5 +31,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "worca": {
+    "platformRange": "^1.0.0-rc.1"
   }
 }

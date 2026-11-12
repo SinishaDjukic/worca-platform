@@ -9,7 +9,11 @@ import { ask, confirm, interactive } from './prompt.mjs';
 
 const PKG_DIR = fileURLToPath(new URL('..', import.meta.url));
 const TEMPLATES = join(PKG_DIR, 'templates');
-const OWN_VERSION = JSON.parse(readFileSync(join(PKG_DIR, 'package.json'), 'utf8')).version;
+const OWN = JSON.parse(readFileSync(join(PKG_DIR, 'package.json'), 'utf8'));
+// The @worca/platform range a new deployment depends on. The two packages are released on their own
+// lines, so it is declared in package.json (`worca.platformRange`) rather than derived from this
+// package's version; /worca-release keeps it pointing at a published @worca/platform.
+const PLATFORM_RANGE = OWN.worca?.platformRange ?? `^${OWN.version}`;
 export const FEATURES = ['newsletter', 'accessRequests', 'tiers'];
 
 const isOrigin = (v) => {
@@ -102,7 +106,7 @@ const FILES = [
 ];
 
 /** Writes the deployment. `only`: names of files to write (repair writes the missing ones). */
-export function writeDeployment(dir, a, { platformVersion = `^${OWN_VERSION}`, only } = {}) {
+export function writeDeployment(dir, a, { platformVersion = PLATFORM_RANGE, only } = {}) {
   const features = Object.fromEntries(FEATURES.map((f) => [f, a.features !== 'none' && a.features.split(',').map((x) => x.trim()).includes(f)]));
   const values = {
     PACKAGE_NAME: basename(dir).toLowerCase().replace(/[^a-z0-9._-]+/g, '-') || a.name,
@@ -157,7 +161,7 @@ export async function main(argv, { parseArgs }) {
   --yes, -y            never ask: missing required answers are errors (also when there's no terminal)
   --no-install         don't run npm install (nor configure)
   --repair             in an existing deployment: write its missing files, install, configure
-  --platform-version   the @worca/platform dependency (default ^${OWN_VERSION})`);
+  --platform-version   the @worca/platform dependency (default ${PLATFORM_RANGE})`);
     return positionals[0] ? 0 : 1;
   }
   const dir = resolve(positionals[0]);

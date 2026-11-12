@@ -4,6 +4,9 @@
   "description": "The management platform for hosted Worca instances: control plane, gate and console on Cloudflare Workers, compute providers for the instances.",
   "license": "MIT",
   "author": "Bosch Digital EOOD, Atanas Atanasov, Emil Angelov",
+  "contributors": [
+    "Worca Contributors (https://github.com/SinishaDjukic/worca-platform/graphs/contributors)"
+  ],
   "type": "module",
   "repository": {
     "type": "git",
