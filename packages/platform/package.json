@@ -61,15 +61,15 @@
     "prepack": "node scripts/build.mjs && node scripts/copy-legal.mjs"
   },
   "dependencies": {
-    "@better-auth/kysely-adapter": "^1.7.7",
-    "@better-auth/passkey": "^1.7.7",
-    "@better-auth/sso": "^1.7.7",
-    "better-auth": "^1.7.7",
-    "hono": "^4.13.13",
-    "jose": "^6.2.12",
-    "kysely": "^0.29.6",
+    "@better-auth/kysely-adapter": "^1.7.18",
+    "@better-auth/passkey": "^1.7.18",
+    "@better-auth/sso": "^1.7.18",
+    "better-auth": "^1.7.18",
+    "hono": "^4.13.17",
+    "jose": "^6.2.16",
+    "kysely": "^0.29.8",
     "kysely-d1": "^0.4.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "publishConfig": {
     "access": "public"
