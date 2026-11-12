@@ -69,7 +69,7 @@
     "jose": "^6.2.12",
     "kysely": "^0.29.6",
     "kysely-d1": "^0.4.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "publishConfig": {
     "access": "public"
