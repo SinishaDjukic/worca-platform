@@ -1,6 +1,6 @@
 {
   "name": "@worca/platform",
-  "version": "0.0.0",
+  "version": "1.0.0-rc.1",
   "description": "The management platform for hosted Worca instances: control plane, gate and console on Cloudflare Workers, compute providers for the instances.",
   "license": "MIT",
   "author": "Bosch Digital EOOD, Atanas Atanasov, Emil Angelov",
