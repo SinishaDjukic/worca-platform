@@ -20,14 +20,14 @@
     "test:package": "node scripts/test-package.mjs"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.22.0",
-    "@cloudflare/workers-types": "^5.20261006.1",
-    "@types/node": "^26.6.4",
+    "@cloudflare/vitest-pool-workers": "^0.23.0",
+    "@cloudflare/workers-types": "^5.20261109.1",
+    "@types/node": "^26.6.6",
     "better-sqlite3": "^13.0.3",
-    "playwright": "^1.63.0",
+    "playwright": "^1.65.0",
     "typescript": "^6.0.3",
     "vitest": "~4.1",
-    "wrangler": "^4.147.0"
+    "wrangler": "^4.158.0"
   },
   "workspaces": [
     "packages/*"
