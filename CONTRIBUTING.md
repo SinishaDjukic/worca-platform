@@ -15,7 +15,7 @@ Everyone taking part in this project is expected to follow the
 > `npm create @worca/platform my-deploy`, as described in
 > [Deploying your own platform](docs/deploy.md).
 
-This repository publishes two npm packages, released together from one tag:
+This repository publishes two npm packages, each released on its own line:
 
 | Package | Source | What it is |
 | --- | --- | --- |
@@ -104,9 +104,10 @@ fake-HTTP test like Railway's.
 ## Releasing
 
 Releases are **tag-driven**: pushing an annotated `worca-platform-v<version>`
-tag triggers the GitHub Actions workflow that tests and publishes
-`@worca/platform` and `@worca/create-platform` to npm with provenance. Nobody
-runs `npm publish` by hand for an established package.
+or `worca-create-platform-v<version>` tag triggers the GitHub Actions workflow
+that tests and publishes that package to npm with provenance. Nobody runs
+`npm publish` by hand for an established package. Maintainers run
+`/worca-release` in Claude Code, which asks which package to release.
 
 See [`docs/RELEASING.md`](docs/RELEASING.md) for the full process, including
 release candidates (`-rc.N`), dist-tags, and the one-time setup for new

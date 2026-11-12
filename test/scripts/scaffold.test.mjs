@@ -62,7 +62,9 @@ test('create-platform writes a deployment from flags', (t) => {
   assert.match(cfg, /from: 'Worca <no-reply@example\.com>'/);
   const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   assert.equal(pkg.scripts.setup, 'worca-platform setup');
-  assert.match(pkg.dependencies['@worca/platform'], /^\^/);
+  // the range create-platform declares for @worca/platform, not its own version (separate release lines)
+  const own = JSON.parse(readFileSync(new URL('../../packages/create-platform/package.json', import.meta.url), 'utf8'));
+  assert.equal(pkg.dependencies['@worca/platform'], own.worca.platformRange);
   assert.deepEqual(JSON.parse(readFileSync(join(dir, 'worca.resources.json'), 'utf8')), {
     cloudflare: { accountId: '0123456789abcdef0123456789abcdef', zoneId: 'fedcba9876543210fedcba9876543210' },
     compute: { railwayWorkspaceId: 'ws-123' },

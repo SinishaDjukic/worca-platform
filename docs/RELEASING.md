@@ -4,8 +4,9 @@ How the platform's packages get published, and what has to be configured — onc
 package, and occasionally afterwards — for that to work.
 
 This is worca-cc's release process ([worca-cc `docs/RELEASING.md`](https://github.com/SinishaDjukic/worca-cc/blob/dev/docs/RELEASING.md)),
-changed only where this repo differs: it publishes **two packages from one tag**, and it has
-no container image or browser extension. When worca-cc's process changes, this file changes
+changed only where this repo differs: it publishes **two packages, each on its own release
+line**, and it has no container image or browser extension. `/worca-release` (in
+`.claude/skills/`) runs the procedure in §4. When worca-cc's process changes, this file changes
 with it.
 
 Everything here is **tag-driven**: you never run `npm publish` by hand for an
@@ -21,32 +22,40 @@ name, and it exists solely to break a chicken-and-egg problem described below.
 | Package | Source | Tag prefix | Workflow |
 | --- | --- | --- | --- |
 | `@worca/platform` | `packages/platform/` | `worca-platform-v*` | `.github/workflows/release-npm.yml` |
-| `@worca/create-platform` | `packages/create-platform/` | `worca-platform-v*` (the same tag) | `.github/workflows/release-npm.yml` (the same run) |
+| `@worca/create-platform` | `packages/create-platform/` | `worca-create-platform-v*` | `.github/workflows/release-npm.yml` (the same file) |
 
-The two packages share **one version and one tag**: `create-platform@x` scaffolds
-deployments that depend on `platform@^x`, so they are always released together.
-The tag prefix is built the way worca-cc builds `worca-app-v*` from `@worca/app`.
+Each package has **its own version and its own tag**, so either can be released
+without the other. Tag prefixes are built the way worca-cc builds `worca-app-v*`
+from `@worca/app`. One workflow file serves both prefixes, and both packages'
+trusted publishers name it.
+
+The link between them is `worca.platformRange` in create-platform's
+`package.json`: the `@worca/platform` range a new deployment depends on (for
+example `^1.0.0-rc.1`). A create-platform release refuses to publish when that
+range matches no published `@worca/platform`, so when both are released, the
+platform goes first.
 
 ---
 
 ## 2. Tag naming
 
 ```
-worca-platform-v1.0.0        GA release
-worca-platform-v1.0.0-rc.1   release candidate
+worca-platform-v1.0.0                @worca/platform GA release
+worca-platform-v1.0.0-rc.1           @worca/platform release candidate
+worca-create-platform-v1.0.0-rc.1    @worca/create-platform release candidate
 ```
 
 Rules:
 
-- **`worca-platform-v<version>`**, where `<version>` is exactly the string in
-  **both** packages' `package.json`. The workflow refuses to publish when any of
-  the three disagree, so a typo fails in CI rather than shipping the wrong number.
+- **`worca-<package>-v<version>`**, where `<version>` is exactly the string in
+  that package's `package.json`. The workflow refuses to publish when they
+  disagree, so a typo fails in CI rather than shipping the wrong number.
 - The `v` is part of the prefix, not the version. `worca-platform-v1.0.0`
   publishes `1.0.0`, never `v1.0.0`.
 - Pre-releases use the `-rc.N` suffix, counting from 1. The workflow keys the
   npm dist-tag off the literal substring `-rc.`, so `-beta.1` or `-rc1` will be
   published as `latest`. Use `-rc.N`.
-- Versions are written by `npm version` in both workspaces — see §4.
+- Versions are written by `npm version -w <package>` — see §4.
 
 ---
 
@@ -113,10 +122,14 @@ Publisher** → GitHub Actions:
 | Repository | `worca-platform` (the GitHub repo name, as-is) |
 | Workflow filename | `release-npm.yml` |
 | Environment | *(leave empty unless the job declares one)* |
-| Allowed actions | `npm publish` only |
+| Label | `release-npm` |
+| Allowed actions | tick **Allow npm publish**; leave **Allow npm dist-tag** unticked |
 
-Leave **`npm stage publish`** unchecked. The OIDC credential can publish and
-nothing else — it cannot move a dist-tag. See §5 for what that means for `rc`.
+`npm stage publish` is always allowed and cannot be unticked. This is the setup
+`@worca/app` uses. The OIDC credential can publish and nothing else — it cannot
+move a dist-tag. See §5 for what that means for `rc`. A new connection shows
+"Pending validation" until the first publish through it, which has to happen
+within about two days.
 
 The registration covers **one package only**: `@worca/platform`'s publisher
 grants nothing to `@worca/create-platform`, even though one workflow publishes
@@ -126,8 +139,9 @@ both. Register both.
 
 Once §3.4 is in place, CI no longer needs a token. Revoke any granular token
 used in §3.3 (npmjs.com → Access Tokens), and set each package's publishing
-access to **"Require two-factor authentication or trusted publishing"** so a
-leaked token cannot publish it.
+access the way `@worca/app` has it: **"Require two-factor authentication or a
+granular access token with bypass 2fa enabled"**. Trusted publishing works with
+either option.
 
 ### 3.6 GitHub side
 
@@ -161,45 +175,56 @@ to be on the released branch, because the next release computes its number from
 `package.json`.
 
 Move the **Unreleased** entries of `CHANGELOG.md` under a heading for the
-version in the same commit.
+release in the same commit: `## @worca/platform 1.1.0-rc.1`, or, when both go
+out together, `## @worca/platform 1.1.0-rc.1, @worca/create-platform 1.1.0-rc.1`.
 
-### 4.1 Release candidates
+`/worca-release --package:platform|create-platform|both --rc|--stable
+[--version:…]` does all of §4; below is what it runs.
 
-`npm version` writes both workspaces when given both; it never tags here
-(`--no-git-tag-version`), and you create the prefixed tag yourself:
+### 4.1 One package
+
+`npm version` never tags here (`--no-git-tag-version`); you create the
+prefixed tag yourself. For `@worca/platform`:
 
 ```bash
-# first RC of a new line — `latest` is untouched, users stay on the old version
-npm version 1.1.0-rc.1 --no-git-tag-version -w @worca/platform -w @worca/create-platform
-git commit -am "chore(release): worca-platform 1.1.0-rc.1"
-git tag -a worca-platform-v1.1.0-rc.1 -m "worca-platform 1.1.0-rc.1"
+npm version 1.1.0-rc.1 --no-git-tag-version -w @worca/platform
+git add packages/platform/package.json package-lock.json CHANGELOG.md
+git commit -m "chore(release): @worca/platform 1.1.0-rc.1"
+git tag -a worca-platform-v1.1.0-rc.1 -m "@worca/platform 1.1.0-rc.1"
 git push origin HEAD && git push origin worca-platform-v1.1.0-rc.1
-
-# subsequent RCs — `prerelease` walks -rc.2, -rc.3, ...
-npm version prerelease --no-git-tag-version -w @worca/platform -w @worca/create-platform >/dev/null
-V=$(node -p "require('./packages/platform/package.json').version")
-git commit -am "chore(release): worca-platform $V"
-git tag -a "worca-platform-v$V" -m "worca-platform $V"
-git push origin HEAD && git push origin "worca-platform-v$V"
 ```
+
+For `@worca/create-platform` the same with `-w @worca/create-platform`,
+`packages/create-platform/package.json` and the tag
+`worca-create-platform-v<version>`. Check first that its `worca.platformRange`
+matches a published `@worca/platform`
+(`npm view "@worca/platform@<range>" version`); the workflow refuses it
+otherwise.
 
 Testers opt in with:
 
 ```bash
-npm create @worca/platform@rc my-deploy     # scaffolds with @worca/platform@^<that rc>
+npm create @worca/platform@rc my-deploy     # create-platform's rc, scaffolding its platformRange
 npm install @worca/platform@rc              # in an existing deployment
 ```
 
-### 4.2 GA release
+### 4.2 Both packages
+
+Release `@worca/platform` first and wait for its workflow to publish it. Then
+point create-platform at it and release create-platform:
 
 ```bash
-npm version 1.1.0 --no-git-tag-version -w @worca/platform -w @worca/create-platform
-git commit -am "chore(release): worca-platform 1.1.0"
-git tag -a worca-platform-v1.1.0 -m "worca-platform 1.1.0"
-git push origin HEAD && git push origin worca-platform-v1.1.0
+# 1. the platform, as in §4.1; wait until `npm view @worca/platform@1.1.0 version` answers
+# 2. create-platform, in a second commit
+npm version 1.1.0 --no-git-tag-version -w @worca/create-platform
+npm pkg set worca.platformRange='^1.1.0' -w @worca/create-platform
+git add packages/create-platform/package.json package-lock.json
+git commit -m "chore(release): @worca/create-platform 1.1.0"
+git tag -a worca-create-platform-v1.1.0 -m "@worca/create-platform 1.1.0"
+git push origin HEAD && git push origin worca-create-platform-v1.1.0
 ```
 
-The workflow publishes both under `latest`. It does **not** touch `rc` — see §5.
+A GA release publishes under `latest` and does **not** touch `rc` — see §5.
 
 > **Do not use `npm version minor` to close out an RC line.** From
 > `1.1.0-rc.3`, semver's rules make `major`, `minor`, and `patch` all collapse
@@ -216,7 +241,7 @@ The workflow publishes both under `latest`. It does **not** touch `rc` — see �
 - **Push the tag explicitly, and make it annotated.** `git push` alone pushes
   no tags. Use `git tag -a … -m …` plus `git push origin <tag>`, then verify with
   `git ls-remote --tags origin`.
-- **Verify after the fact**, for both packages:
+- **Verify after the fact**, for each package released:
 
   ```bash
   npm view @worca/platform dist-tags
@@ -283,7 +308,7 @@ release. Cutting the next RC moves it ahead again.
 | --- | --- |
 | `npm error code ENEEDAUTH` in CI | Trusted publisher not registered for that package, or workflow filename/repo mismatch, or missing `id-token: write` on the job |
 | `404 Not Found - PUT https://registry.npmjs.org/@worca%2f…` after "Signed provenance statement" | That package has no trusted publisher any more. Register it again (§3.4), then re-run the failed job: nothing was published for it |
-| One package published, the other failed | Re-run the failed job: the workflow skips a version that is already on npm, so the published one is not touched |
+| create-platform refused: `@worca/platform@<range> matches no published version` | Release `@worca/platform` first (§4.2), or fix `worca.platformRange`; the create-platform tag is burned, so bump to the next version |
 | `provenance generation failed` / repository mismatch | `repository.url` does not point at the building repo |
 | `You cannot publish over the previously published versions` | The version was already published — bump it; it cannot be reused |
 | Workflow never starts | Only the commit was pushed, not the tag, or the tag does not match `worca-platform-v*` |
