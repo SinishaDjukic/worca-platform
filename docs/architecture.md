@@ -70,6 +70,7 @@ The gate object is asked only when it matters (D44):
 | GET or HEAD with an expired pass | Yes, once; then a new pass for 60 seconds |
 | Any method that changes state | Yes, every time |
 | WebSocket upgrade | Yes, every time |
+| GET or HEAD of a design preview asset from worca's sandboxed preview frame | No, and there is no cookie: forwarded with no identity (see [Security](security.md#design-preview-assets)) |
 
 When asked, the gate object checks that the session still exists and the instance is `running`,
 and records the visit. If the identity token in the cookie has less than two minutes left, the

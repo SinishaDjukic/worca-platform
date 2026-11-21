@@ -1,6 +1,6 @@
 // The gate: every request to *.INSTANCE_DOMAIN (architecture.md "Each request after that", security.md
-// "Isolation between instances"). Order: host, cookie sanity, callback, cross-origin check, pass,
-// gate object check, token renewal, forward.
+// "Isolation between instances"). Order: host, cookie sanity, callback, cross-origin check, design
+// preview assets (no session), pass, gate object check, token renewal, forward.
 import { GATE_PATHS, type HostEntry, type WakePhase } from '../shared/contracts';
 import type { CheckResult, GateObject, GateStatus } from './gate-object';
 import { gateStub, isLocalDev, passSeconds } from './config';
@@ -27,7 +27,7 @@ export async function handleRequest(request: Request, env: Env, _ctx: ExecutionC
     res = errorPage(siteOf(env), 502, 'The instance could not be reached. Try again in a moment.');
   }
   if (res.webSocket || res.status === 101) return res;
-  return secured(res, env);
+  return secured(res, env, isPreviewAssetRead(request));
 }
 
 function requestHost(request: Request): string {
@@ -74,6 +74,42 @@ export function isSecretRead(pathname: string): boolean {
   return SECRET_READS.some((re) => re.test(pathname) || re.test(path));
 }
 
+/**
+ * A file under worca's design preview: `/design-preview/<token>/<build|run>/<file>`, the token 32
+ * random bytes in base64url (worca's `src/core/design/preview-grants.mjs`). Never the preview
+ * document itself, which has nothing after the mode.
+ */
+const PREVIEW_ASSET = /^\/design-preview\/[A-Za-z0-9_-]{43}\/(?:build|run)\/./;
+
+/**
+ * The one read forwarded without a gate session (security.md "Design preview assets"). worca shows
+ * a design in a sandboxed frame, whose opaque origin makes every request from inside it cross-site:
+ * the browser sends no session cookie, and worca's path token is the credential, checked by worca
+ * before its identity check. Only GET and HEAD, only `Sec-Fetch-Site: cross-site` (what that frame
+ * sends; a page on another instance sends `same-site`), never a navigation or a WebSocket upgrade.
+ */
+export function isPreviewAssetRead(request: Request): boolean {
+  return (
+    (request.method === 'GET' || request.method === 'HEAD') &&
+    request.headers.get('sec-fetch-site') === 'cross-site' &&
+    !isNavigation(request) && !isWebSocketUpgrade(request) &&
+    PREVIEW_ASSET.test(new URL(request.url).pathname)
+  );
+}
+
+/**
+ * Forwards a preview asset read as nobody: no identity token, no cookies, no credentials the client
+ * sent, and no Set-Cookie back. The gate object is not asked, so nothing is woken and no visit is
+ * counted. Any other path that got here would be refused by worca's identity check.
+ */
+async function forwardPreviewAsset(request: Request, env: Env, host: string): Promise<Response> {
+  const entry = await lookupHost(env, host);
+  if (!entry) return notFoundPage(siteOf(env), { host, appOrigin: env.APP_ORIGIN });
+  const res = await forward(request, host, entry, null, env);
+  res.headers.delete('set-cookie');
+  return res;
+}
+
 async function lookupHost(env: Env, host: string): Promise<HostEntry | null> {
   return env.HOSTS.get<HostEntry>(host, 'json');
 }
@@ -92,6 +128,8 @@ async function route(request: Request, env: Env): Promise<Response> {
   if ((isUnsafeMethod(request.method) || ws) && !isSameOriginRequest(request)) {
     return jsonResponse(403, { error: 'cross_origin' });
   }
+
+  if (isPreviewAssetRead(request)) return forwardPreviewAsset(request, env, host);
 
   const sealed = getCookie(cookieHeader, SESSION_COOKIE);
   const cookie = sealed ? await openSession(env.GATE_COOKIE_KEY, host, sealed) : null;

@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Fixed
+
+- Gate: files a worca design preview loads from inside its sandboxed frame (an image too large to
+  embed, a run-mode `fetch`, anything with `WORCA_DESIGN_PREVIEW_INLINE=0`) now load. The frame's
+  origin is opaque, so those requests arrive cross-site and without the gate cookie, and were
+  answered `401 signin_required`; `Cross-Origin-Resource-Policy: same-origin` blocked them too.
+  The gate now forwards `GET` and `HEAD` of `/design-preview/<token>/<build|run>/<file>` with
+  `Sec-Fetch-Site: cross-site` without a session and with no identity, leaving worca's path token
+  as the only check, and keeps worca's `Cross-Origin-Resource-Policy: cross-origin` on those
+  responses. See "Design preview assets" in [Security](docs/security.md) for what this costs.
+
 ## @worca/platform 1.0.0-rc.1, @worca/create-platform 1.0.0-rc.1
 
 The first release of the Worca platform as open source: the management platform behind hosted
