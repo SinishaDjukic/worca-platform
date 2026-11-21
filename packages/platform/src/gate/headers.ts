@@ -49,10 +49,12 @@ export function filterSetCookies(headers: Headers): void {
 /** Headers on every gate response, including proxied ones. */
 export function applySecurityHeaders(headers: Headers, env: Env): void {
   // Framing stays inside one origin: an instance frames its own pages (worca's design preview), never another
-  // instance's. Appended: browsers enforce every CSP header, so a stricter policy of worca's or of a gate page
-  // (pages.ts) stays in force, and so does a DENY either of them sent.
-  headers.append('content-security-policy', "frame-ancestors 'self'");
-  if (headers.get('x-frame-options')?.trim().toUpperCase() !== 'DENY') headers.set('x-frame-options', 'SAMEORIGIN');
+  // instance's. A response that forbids framing (worca's, or a gate page, pages.ts) stays forbidden: browsers skip
+  // X-Frame-Options once a CSP names frame-ancestors, so its DENY is repeated as 'none'. The CSP is appended, and
+  // browsers enforce every CSP header, so worca's own policy stays in force.
+  const deny = (headers.get('x-frame-options') ?? '').split(',').some((v) => v.trim().toUpperCase() === 'DENY');
+  headers.append('content-security-policy', `frame-ancestors ${deny ? "'none'" : "'self'"}`);
+  headers.set('x-frame-options', deny ? 'DENY' : 'SAMEORIGIN');
   headers.set('origin-agent-cluster', '?1');
   headers.set('cross-origin-opener-policy', 'same-origin');
   headers.set('cross-origin-resource-policy', 'same-origin');

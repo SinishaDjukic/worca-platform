@@ -4,11 +4,12 @@
 
 ### Fixed
 
-- Gate: an instance can frame its own pages again. The gate added `frame-ancestors 'none'` and
-  `X-Frame-Options: DENY` to every proxied response, which blanked the design preview that worca
-  1.19 loads in a same-origin frame. It now adds `frame-ancestors 'self'` and `SAMEORIGIN`
-  (a `DENY` from worca is kept), so other instances still can't frame it. The gate's own pages
-  stay unframeable.
+- Gate: the design preview of worca 1.19 loads on hosted instances. worca shows it in a sandboxed
+  frame whose address is on the instance's own origin, and the gate added `frame-ancestors 'none'`
+  and `X-Frame-Options: DENY` to every response, so the browser blocked it. Responses the gate
+  forwards now get `frame-ancestors 'self'` and `SAMEORIGIN`: the instance's own origin can frame
+  them, another instance can't. A response worca marks `X-Frame-Options: DENY` gets
+  `frame-ancestors 'none'`, and the gate's own pages stay unframeable.
 
 ## @worca/platform 1.0.0-rc.1, @worca/create-platform 1.0.0-rc.1
 
