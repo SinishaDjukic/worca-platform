@@ -37,7 +37,7 @@ as every other one. The gate Worker closes the gaps that opens:
 | A sets `Domain=.worca.run` cookies that B receives | Medium | Its own cookies are `__Host-`, so they can't be overwritten. Removes every incoming cookie except `__Host-` ones before forwarding, and never forwards its own. Removes any outgoing `Set-Cookie` that isn't `__Host-` |
 | JavaScript on A floods `.worca.run` with cookies, pushing out B's session or making requests too large | Low | Can't be prevented before the PSL listing. Oversized or broken requests get a recovery page that sends `Clear-Site-Data: "cookies"`; the person signs in again |
 | A loads B in an invisible frame | Medium | Adds `Content-Security-Policy: frame-ancestors 'none'` and `X-Frame-Options: DENY` |
-| A and B share a browser process (side channels) | Low | Adds `Origin-Agent-Cluster: ?1`, `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy: same-origin` |
+| A and B share a browser process (side channels) | Low | Adds `Origin-Agent-Cluster: ?1`, `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy: same-origin` (except on [design preview assets](#design-preview-assets), which keep worca's `cross-origin`) |
 | A pushes the visitor through B's sign-in callback with a planted code | Low | Codes are bound to B's host, single-use, short-lived; the `state` cookie must match |
 
 The same rules protect an instance's key page from that instance's own worca pages, where agent
@@ -52,7 +52,8 @@ Keep all gate headers after the PSL listing; only the cookie rows become unneces
 
 - **It is the only way in.** No instance has a public Railway domain; traffic reaches it only
   through its own tunnel. worca refuses requests without a valid identity token, so a request that
-  went around the gate gets nothing.
+  went around the gate gets nothing. The one path worca answers without a token is its design
+  preview, guarded by worca's own path token (below).
 - **It covers every host.** One route `*.worca.run/*`, no other routes on the zone, and every DNS
   record proxied (no grey-cloud records).
 - **One tunnel per instance** (D5).
@@ -68,6 +69,62 @@ Keep all gate headers after the PSL listing; only the cookie rows become unneces
 |---|---|---|---|
 | Removed from a team or org, signed out, user disabled | At once | Within 60 s; secrets at once | Within the token's lifetime (W7) |
 | Instance stopped for abuse or deleted | At once | Within 60 s, or sooner when the services stop | When the services stop |
+
+[Design preview assets](#design-preview-assets) are outside this table: they follow worca's
+preview token, not the gate session.
+
+### Design preview assets
+
+worca shows a design in a frame with `sandbox="allow-scripts"`, served from the instance's own
+`/design-preview/<token>/<build|run>/`. The frame's origin is opaque, so every request made from
+inside it (an image, a script, a `fetch`) is cross-site: the browser sends no gate cookie. worca
+expects this. The token in the path (32 random bytes, minted only for a signed-in person who may
+see the design, valid 12 hours, held in memory) is its credential there, and worca checks it
+before its identity check.
+
+So the gate forwards one kind of request without a session:
+
+- `GET` or `HEAD` only;
+- a path that matches `/design-preview/<43 base64url characters>/<build|run>/<file>`. The preview
+  document itself (nothing after the mode) is not covered: the worca page loads it as a
+  same-origin navigation, which carries the cookie;
+- `Sec-Fetch-Site: cross-site`, which is what the sandboxed frame sends. A page on another
+  instance sends `same-site` and a missing header fails;
+- not a navigation and not a WebSocket upgrade.
+
+Such a request reaches the instance as nobody: no identity token, no cookies, no `Authorization`
+header, and any identity header the client sent is removed. A path that slipped past the pattern
+would therefore be refused by worca's identity check. The response sets no cookie. The gate object
+is not asked, so the request wakes nothing, counts as no visit and creates no session. These
+responses keep worca's `Cross-Origin-Resource-Policy: cross-origin` (an opaque origin can't load a
+`same-origin` resource); every other gate header is applied as usual.
+
+What this costs, checked against the table above:
+
+- **Requests that change state, cookies, sign-in callback:** unchanged. The exemption is read-only,
+  cookie-free in both directions and never reaches a gate path.
+- **Framing:** unchanged. Navigations are excluded, so a preview file can't be opened as a page or
+  a frame without a session.
+- **Side channels:** another origin can pull a preview file into its process only if it already
+  has the token, and then it can read the file anyway (worca sends `Access-Control-Allow-Origin: *`).
+- **Who can read:** anyone who holds a preview token can read that design's working files until the
+  token expires, signed in or not. The token is in the frame's URL in the signed-in person's
+  browser; it leaves only if they copy it. The gate's `Referrer-Policy: same-origin` keeps it out of
+  every `Referer` sent to another origin.
+- **After access ends:** a token minted before a person was removed keeps working for these files
+  for up to 12 hours, or until worca restarts or the design is deleted. Reads behind the session
+  still end within 60 seconds.
+- **Stopped or deleted instances:** these reads end when the services stop, not when the status
+  changes.
+- **Abuse:** an instance's owner can make files publicly fetchable (hot-linked images, scripts or
+  data, not pages) for as long as they keep minting tokens. Stopping the instance ends it.
+- **Unauthenticated traffic:** a request that matches the pattern reaches the instance before any
+  credential is checked. worca answers a wrong token with a bare 404.
+
+The gate has to know this one worca path, as it knows `/api/models/:id/env-value`. worca's side of
+the contract is `src/core/design/preview-gate.mjs` and `preview-grants.mjs`: if worca changes the
+mount, the token length or the modes, the pattern stops matching and previews fall back to worca's
+embedded assets; nothing else opens.
 
 ### What it does nothing about
 

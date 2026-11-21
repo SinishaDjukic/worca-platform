@@ -23,14 +23,21 @@ export function forwardedCookies(header: string | null): string | null {
   return kept.length ? kept.map(([n, v]) => `${n}=${v}`).join('; ') : null;
 }
 
-/** Request headers for the instance: no client identity header, no gate cookies, our token. */
-export function upstreamHeaders(incoming: Headers, host: string, token: string): Headers {
+/**
+ * Request headers for the instance: no client identity header, no gate cookies, our token. With a
+ * null token the request is anonymous: no token, no cookies and no Authorization either.
+ */
+export function upstreamHeaders(incoming: Headers, host: string, token: string | null): Headers {
   const headers = new Headers(incoming);
   headers.delete(IDENTITY_HEADER);
   headers.delete('cookie');
-  const cookies = forwardedCookies(incoming.get('cookie'));
-  if (cookies) headers.set('cookie', cookies);
-  headers.set(IDENTITY_HEADER, token);
+  if (token === null) {
+    headers.delete('authorization');
+  } else {
+    const cookies = forwardedCookies(incoming.get('cookie'));
+    if (cookies) headers.set('cookie', cookies);
+    headers.set(IDENTITY_HEADER, token);
+  }
   headers.set('x-forwarded-host', host);
   return headers;
 }
@@ -46,22 +53,27 @@ export function filterSetCookies(headers: Headers): void {
   }
 }
 
-/** Headers on every gate response, including proxied ones. */
-export function applySecurityHeaders(headers: Headers, env: Env): void {
+/**
+ * Headers on every gate response, including proxied ones. `openResource` (a design preview asset,
+ * handler.ts `isPreviewAssetRead`) keeps an upstream `Cross-Origin-Resource-Policy: cross-origin`:
+ * the sandboxed frame that loads it has an opaque origin, which `same-origin` would block.
+ */
+export function applySecurityHeaders(headers: Headers, env: Env, openResource = false): void {
   // Appended: browsers enforce every CSP header, so worca's own policy stays in force.
   headers.append('content-security-policy', "frame-ancestors 'none'");
   headers.set('x-frame-options', 'DENY');
   headers.set('origin-agent-cluster', '?1');
   headers.set('cross-origin-opener-policy', 'same-origin');
-  headers.set('cross-origin-resource-policy', 'same-origin');
+  const upstreamPolicy = headers.get('cross-origin-resource-policy')?.trim().toLowerCase();
+  if (!(openResource && upstreamPolicy === 'cross-origin')) headers.set('cross-origin-resource-policy', 'same-origin');
   headers.set('x-content-type-options', 'nosniff');
   headers.set('referrer-policy', 'same-origin');
   if (!isLocalDev(env)) headers.set('strict-transport-security', 'max-age=63072000; includeSubDomains; preload');
 }
 
 /** A copy of `res` with mutable headers and the security headers applied. */
-export function secured(res: Response, env: Env): Response {
+export function secured(res: Response, env: Env, openResource = false): Response {
   const out = new Response(res.body, res);
-  applySecurityHeaders(out.headers, env);
+  applySecurityHeaders(out.headers, env, openResource);
   return out;
 }

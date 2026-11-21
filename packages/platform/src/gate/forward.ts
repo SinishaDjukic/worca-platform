@@ -26,7 +26,8 @@ const TUNNEL_DOWN_STATUS = 530;
 
 const TIMEOUT = Symbol('timeout');
 
-export async function forward(request: Request, host: string, entry: HostEntry | null, token: string, env: Env): Promise<Response> {
+/** `token` null: an anonymous read (handler.ts `forwardPreviewAsset`), sent with no identity at all. */
+export async function forward(request: Request, host: string, entry: HostEntry | null, token: string | null, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const target = entry?.upstream ? new URL(url.pathname + url.search, entry.upstream) : url;
   const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
