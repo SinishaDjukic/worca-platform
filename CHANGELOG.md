@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Fixed
+
+- Gate: an instance can frame its own pages again. The gate added `frame-ancestors 'none'` and
+  `X-Frame-Options: DENY` to every proxied response, which blanked the design preview that worca
+  1.19 loads in a same-origin frame. It now adds `frame-ancestors 'self'` and `SAMEORIGIN`
+  (a `DENY` from worca is kept), so other instances still can't frame it. The gate's own pages
+  stay unframeable.
+
 ## @worca/platform 1.0.0-rc.1, @worca/create-platform 1.0.0-rc.1
 
 The first release of the Worca platform as open source: the management platform behind hosted

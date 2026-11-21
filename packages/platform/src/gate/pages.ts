@@ -95,6 +95,7 @@ export function htmlResponse(site: Site, status: number, spec: PageSpec, init: R
   headers.set('content-type', 'text/html; charset=utf-8');
   headers.set('cache-control', 'no-store');
   headers.set('content-security-policy', pageCsp(n));
+  headers.set('x-frame-options', 'DENY');
   return new Response(page(spec, n, site), { ...init, status, headers });
 }
 

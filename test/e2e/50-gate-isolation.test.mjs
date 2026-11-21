@@ -10,8 +10,8 @@ import { instanceFetch, instanceFixture, jwtPayload, signInToInstance } from './
 const skip = await skipUnlessUp();
 
 const SECURITY_HEADERS = {
-  'x-frame-options': /^DENY$/i,
-  'content-security-policy': /frame-ancestors 'none'/,
+  'x-frame-options': /^(DENY|SAMEORIGIN)$/i,
+  'content-security-policy': /frame-ancestors '(none|self)'/,
   'origin-agent-cluster': /^\?1$/,
   'cross-origin-opener-policy': /^same-origin$/,
   'cross-origin-resource-policy': /^same-origin$/,
