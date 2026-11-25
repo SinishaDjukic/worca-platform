@@ -3,7 +3,7 @@ blank_issues_enabled: false
 # to the chooser on its own, from SECURITY.md.
 contact_links:
   - name: Deploying your own platform
-    url: https://github.com/SinishaDjukic/worca-platform/blob/dev/docs/deploy.md
+    url: https://github.com/worca-org/worca-platform/blob/dev/docs/deploy.md
     about: Accounts, tokens, setup and costs.
   - name: Worca itself
     url: https://github.com/SinishaDjukic/worca-cc/issues

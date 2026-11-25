@@ -39,7 +39,7 @@ Requirements:
   server.
 
 ```bash
-git clone https://github.com/SinishaDjukic/worca-platform.git
+git clone https://github.com/worca-org/worca-platform.git
 cd worca-platform     # the default branch is dev
 npm install
 npm run keys:dev      # writes .dev.vars (both Workers share it)
