@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## @worca/platform 1.0.0-rc.2, @worca/create-platform 1.0.0-rc.2
+
 - The repository moved to [worca-org/worca-platform](https://github.com/worca-org/worca-platform).
   Old links and clones redirect. Both packages publish from the new repository.
 
