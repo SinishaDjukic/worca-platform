@@ -159,7 +159,7 @@ describe('pinning', () => {
   });
 
   it('the cloudflared refresh still reaches an instance on a candidate', () => {
-    const want = 'ghcr.io/sinishadjukic/worca:1.15.0-rc.1';
+    const want = 'ghcr.io/worca-org/worca:1.15.0-rc.1';
     expect(needsRefresh({ worca_version: '1.15.0-rc.1', deployed_images: JSON.stringify({ worca: want, broker: want, cloudflared: 'cloudflare/cloudflared:old' }) }, imageSources(E))).toBe(true);
   });
 });

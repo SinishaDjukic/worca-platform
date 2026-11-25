@@ -48,7 +48,7 @@ const ctx = (providers: Providers, steps = immediateSteps(), maxPolls = 3): OpsC
 
 describe('image sources', () => {
   it('default to the public worca image and the pinned cloudflared; a deployment can set both', () => {
-    expect(imageSources({})).toEqual({ worca: 'ghcr.io/sinishadjukic/worca', cloudflared: CLOUDFLARED_IMAGE });
+    expect(imageSources({})).toEqual({ worca: 'ghcr.io/worca-org/worca', cloudflared: CLOUDFLARED_IMAGE });
     const own = imageSources({ WORCA_IMAGE: 'registry.example.com/acme/worca', CLOUDFLARED_IMAGE: 'mirror.example.com/cloudflared:2026.11.0' });
     expect(imagesFor('1.9.1', own)).toEqual({
       worca: 'registry.example.com/acme/worca:1.9.1',

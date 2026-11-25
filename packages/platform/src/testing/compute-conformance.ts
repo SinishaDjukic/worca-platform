@@ -57,7 +57,7 @@ export function computeProviderChecks(h: ComputeHarness): ConformanceCheck[] {
       cpu: size.vcpu,
       memoryMb: size.memoryMb,
       volumeGb: 10,
-      image: h.images ?? { worca: 'ghcr.io/sinishadjukic/worca:1.19.0', broker: 'ghcr.io/sinishadjukic/worca:1.19.0', cloudflared: 'cloudflare/cloudflared:2026.10.3' },
+      image: h.images ?? { worca: 'ghcr.io/worca-org/worca:1.19.0', broker: 'ghcr.io/worca-org/worca:1.19.0', cloudflared: 'cloudflare/cloudflared:2026.10.3' },
       // What the platform hands over for an instance whose admins saved nothing: the declared defaults.
       settings: effectiveSettings(info.settings?.instance, null),
     };

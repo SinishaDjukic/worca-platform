@@ -580,7 +580,7 @@ describe('railway provider', () => {
 describe('railway describe (compute facts)', () => {
   // Shaped like the live answer of 2026-10-07 for an instance created before the EU placement fix.
   const meta = (multiRegionConfig: unknown) => ({
-    image: 'ghcr.io/sinishadjukic/worca:1.9.0',
+    image: 'ghcr.io/worca-org/worca:1.9.0',
     runtime: 'V2',
     volumeMounts: ['/data'],
     serviceManifest: { deploy: { multiRegionConfig, region: null, limitOverride: { containers: { cpu: 2, memoryBytes: 4_000_000_000 } } } },

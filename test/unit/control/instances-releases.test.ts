@@ -48,10 +48,10 @@ describe('the image check', () => {
     reg.images.set('1.16.0', {});
     expect(await checkImage('1.16.0', reg.fetch, DEFAULT_WORCA_IMAGE)).toEqual({ status: 'ok' });
     expect(reg.requests.map((r) => r.url)).toEqual([
-      'https://ghcr.io/token?scope=repository:sinishadjukic/worca:pull&service=ghcr.io',
-      'https://ghcr.io/v2/sinishadjukic/worca/manifests/1.16.0',
-      'https://ghcr.io/v2/sinishadjukic/worca/manifests/sha256:idx-1.16.0',
-      'https://ghcr.io/v2/sinishadjukic/worca/blobs/sha256:cfg-1.16.0',
+      'https://ghcr.io/token?scope=repository:worca-org/worca:pull&service=ghcr.io',
+      'https://ghcr.io/v2/worca-org/worca/manifests/1.16.0',
+      'https://ghcr.io/v2/worca-org/worca/manifests/sha256:idx-1.16.0',
+      'https://ghcr.io/v2/worca-org/worca/blobs/sha256:cfg-1.16.0',
     ]);
     expect(reg.requests[1]?.headers.get('authorization')).toBe('Bearer anon-token');
     // 1.14.0 was the 1.14.0-rc.4 image retagged: its heartbeat never says 1.14.0.
