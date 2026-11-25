@@ -82,7 +82,7 @@ continue".
 ```bash
 # 1. This is the public worca-platform repo, on dev. A release from anywhere else (the private
 #    platform branch, a fork) would tag a commit the workflow never sees.
-git remote get-url origin | grep -q 'SinishaDjukic/worca-platform' || { echo "ERROR: not the worca-platform repo"; exit 1; }
+git remote get-url origin | grep -q 'worca-org/worca-platform' || { echo "ERROR: not the worca-platform repo"; exit 1; }
 [ "$(git branch --show-current)" = "dev" ] || { echo "ERROR: not on dev"; exit 1; }
 
 # 2. Clean working tree — the tag must describe exactly what CI will build.

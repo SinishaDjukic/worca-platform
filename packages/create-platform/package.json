@@ -5,12 +5,12 @@
   "license": "MIT",
   "author": "Bosch Digital EOOD, Atanas Atanasov, Emil Angelov",
   "contributors": [
-    "Worca Contributors (https://github.com/SinishaDjukic/worca-platform/graphs/contributors)"
+    "Worca Contributors (https://github.com/worca-org/worca-platform/graphs/contributors)"
   ],
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SinishaDjukic/worca-platform.git",
+    "url": "git+https://github.com/worca-org/worca-platform.git",
     "directory": "packages/create-platform"
   },
   "engines": {

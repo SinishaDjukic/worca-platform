@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The repository moved to [worca-org/worca-platform](https://github.com/worca-org/worca-platform).
+  Old links and clones redirect. Both packages publish from the new repository.
+
 ### Fixed
 
 - Gate: the design preview of worca 1.19 loads on hosted instances. worca shows it in a sandboxed

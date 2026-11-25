@@ -23,4 +23,4 @@ Files:
   manager: without `MASTER_KEY` no backup can be read.
 - `branding/`: optional logo, favicon, colours (`docs/branding.md` in the same repository).
 
-Full guide: `docs/deploy.md` in https://github.com/SinishaDjukic/worca-platform.
+Full guide: `docs/deploy.md` in https://github.com/worca-org/worca-platform.
