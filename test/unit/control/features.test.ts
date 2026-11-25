@@ -96,6 +96,10 @@ describe.each(ROUTES)('%s owns %s', (name, path, init) => {
 });
 
 describe('the access-request digest', () => {
+  // runCrons runs every job on the CRON_STALE schedule, not only the digest, which can take longer
+  // than vitest's 5 s default on a busy runner (it timed out in the 1.0.0-rc.2 release run).
+  const CRON_TEST_TIMEOUT = 20_000;
+
   async function pendingRequest(): Promise<string> {
     const id = crypto.randomUUID();
     await E.DB.prepare(`INSERT INTO access_requests (id, source, status, created_at) VALUES (?, 'test', 'pending', ?)`).bind(id, Date.now()).run();
@@ -108,13 +112,13 @@ describe('the access-request digest', () => {
     await runCrons(createScheduledController({ cron: CRON_STALE, scheduledTime: Date.UTC(2035, 0, 1, 10, 5) }), ALL_OFF, createExecutionContext());
     expect((await notifiedAt(id))?.n).toBeNull();
     await E.DB.prepare('DELETE FROM access_requests WHERE id = ?').bind(id).run();
-  });
+  }, CRON_TEST_TIMEOUT);
 
   it('is sent while they are on', async () => {
     const id = await pendingRequest();
     await runCrons(createScheduledController({ cron: CRON_STALE, scheduledTime: Date.UTC(2035, 0, 1, 12, 5) }), ALL_ON, createExecutionContext());
     expect((await notifiedAt(id))?.n).not.toBeNull();
-  });
+  }, CRON_TEST_TIMEOUT);
 });
 
 describe('tiers', () => {
