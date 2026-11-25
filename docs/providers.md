@@ -14,7 +14,7 @@ The **edge provider** handles the tunnel and DNS. It is `cloudflare` (or `fake`)
 pluggable yet. It gets the addresses it routes to from the compute provider.
 
 What the containers expect is described in worca-cc's
-[`docs/instance-contract.md`](https://github.com/SinishaDjukic/worca-cc/blob/dev/docs/instance-contract.md):
+[`docs/instance-contract.md`](https://github.com/worca-org/worca/blob/dev/docs/instance-contract.md):
 images, start commands, ports, volumes and variables. The platform renders that contract as
 variables in `src/control/providers/instance-env.ts`, so every provider sets the same ones.
 

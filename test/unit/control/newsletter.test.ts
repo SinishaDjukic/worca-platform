@@ -369,7 +369,7 @@ describe('recipients by threshold', () => {
 });
 
 describe('POST /api/hooks/release', () => {
-  const body = (v: string, extra: Record<string, unknown> = {}) => JSON.stringify({ version: v, url: `https://github.com/SinishaDjukic/worca-cc/releases/tag/v${v}`, ...extra });
+  const body = (v: string, extra: Record<string, unknown> = {}) => JSON.stringify({ version: v, url: `https://github.com/worca-org/worca/releases/tag/v${v}`, ...extra });
   const hook = async (raw: string, sig?: string, env = base({ RELEASE_HOOK_SECRET: HOOK_SECRET })) =>
     call('/api/hooks/release', { method: 'POST', headers: { 'content-type': 'application/json', 'x-worca-signature': sig ?? (await releaseSignature(HOOK_SECRET, raw)) }, body: raw }, env);
 

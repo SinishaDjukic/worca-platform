@@ -23,9 +23,9 @@ This repository publishes two npm packages, each released on its own line:
 | [`@worca/create-platform`](https://www.npmjs.com/package/@worca/create-platform) | `packages/create-platform/` | `npm create @worca/platform`: writes a new deployment |
 
 Worca itself, the product the platform hosts, lives in
-[worca-cc](https://github.com/SinishaDjukic/worca-cc). What an instance is made
+[worca](https://github.com/worca-org/worca). What an instance is made
 of and what the platform sets on it is its
-[instance contract](https://github.com/SinishaDjukic/worca-cc/blob/dev/docs/instance-contract.md).
+[instance contract](https://github.com/worca-org/worca/blob/dev/docs/instance-contract.md).
 
 ## Development setup
 

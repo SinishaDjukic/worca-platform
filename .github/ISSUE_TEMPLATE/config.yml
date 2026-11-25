@@ -6,5 +6,5 @@ contact_links:
     url: https://github.com/worca-org/worca-platform/blob/dev/docs/deploy.md
     about: Accounts, tokens, setup and costs.
   - name: Worca itself
-    url: https://github.com/SinishaDjukic/worca-cc/issues
+    url: https://github.com/worca-org/worca/issues
     about: Problems inside a Worca instance (runs, chat, the credential broker) go to worca-cc.

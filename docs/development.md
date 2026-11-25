@@ -159,7 +159,7 @@ The release workflow posts `{ "version": "1.9.0", "url": "<release notes URL, ht
 with the header `x-worca-signature: sha256=<hex HMAC-SHA256 of the exact body bytes, keyed with RELEASE_HOOK_SECRET>`:
 
 ```sh
-body='{"version":"1.9.0","url":"https://github.com/SinishaDjukic/worca-cc/releases/tag/v1.9.0"}'
+body='{"version":"1.9.0","url":"https://github.com/worca-org/worca/releases/tag/v1.9.0"}'
 sig=$(printf '%s' "$body" | openssl dgst -sha256 -hmac "$RELEASE_HOOK_SECRET" -hex | sed 's/^.* //')
 curl -sS -X POST https://app.example.com/api/hooks/release \
   -H 'content-type: application/json' -H "x-worca-signature: sha256=$sig" --data-binary "$body"

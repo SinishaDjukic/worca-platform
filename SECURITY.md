@@ -81,7 +81,7 @@ In scope: problems in the code of this repository, for example:
 Out of scope:
 
 - vulnerabilities in Worca itself (the instance image); report those as
-  [worca-cc's security policy](https://github.com/SinishaDjukic/worca-cc/security/policy)
+  [worca's security policy](https://github.com/worca-org/worca/security/policy)
   describes, to the same address
 - vulnerabilities in Cloudflare, Railway, Resend or other third-party services
   themselves; report those to their maintainers

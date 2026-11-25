@@ -37,10 +37,10 @@ const links = news.newsletterLinks(env, 'sample-token');
 // GitHub's generated release body, as the release workflow sends it.
 const notes = [
   "## What's Changed",
-  '* A stop ends the container with exit 0 by @SinishaDjukic in https://github.com/SinishaDjukic/worca-cc/pull/610',
-  '* Broker key page: \`__Host-\` CSRF cookie over https by @SinishaDjukic in https://github.com/SinishaDjukic/worca-cc/pull/612',
+  '* A stop ends the container with exit 0 by @SinishaDjukic in https://github.com/worca-org/worca/pull/610',
+  '* Broker key page: \`__Host-\` CSRF cookie over https by @SinishaDjukic in https://github.com/worca-org/worca/pull/612',
   '',
-  '**Full Changelog**: https://github.com/SinishaDjukic/worca-cc/compare/worca-app-v1.9.0...worca-app-v1.9.1',
+  '**Full Changelog**: https://github.com/worca-org/worca/compare/worca-app-v1.9.0...worca-app-v1.9.1',
 ].join('\\n');
 
 export const mails = {
