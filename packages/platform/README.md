@@ -36,7 +36,7 @@ at `node_modules/@worca/platform/migrations`.
 | `smoke` | one instance end to end (`-- --env dev` locally) |
 | `secrets`, `admin`, `upgrade`, `configure` | secrets per Worker; the first superadmin; a new version; configs only |
 
-Guide: `docs/deploy.md` in https://github.com/SinishaDjukic/worca-platform.
+Guide: `docs/deploy.md` in https://github.com/worca-org/worca-platform.
 
 | Import | What |
 |---|---|

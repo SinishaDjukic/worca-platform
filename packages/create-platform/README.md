@@ -17,5 +17,5 @@ also takes a flag or an environment variable, and `--yes` never asks (for CI):
 It refuses a folder that isn't empty, unless it is a deployment already: then `--repair` writes
 only its missing files. It also refuses to run inside a checkout of the platform's own repository.
 
-The guide: `docs/deploy.md` in https://github.com/SinishaDjukic/worca-platform. Released together
+The guide: `docs/deploy.md` in https://github.com/worca-org/worca-platform. Released together
 with `@worca/platform`, same version: `create-platform@x` writes deployments of `platform@^x`.

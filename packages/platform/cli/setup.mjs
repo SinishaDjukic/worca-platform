@@ -144,7 +144,7 @@ export async function setup(dir, { env: wanted } = {}) {
     npm run admin -- you@example.com
   then sign in at ${e.appOrigin}/sign-in with that address.
 
-  Still to do by hand (docs/deploy.md in github.com/SinishaDjukic/worca-platform):
+  Still to do by hand (docs/deploy.md in github.com/worca-org/worca-platform):
     - verify the mail sender's domain at Resend (${config.mail.from})
     - request ${e.instanceDomain} on the Public Suffix List (D12: until it is listed, the gate alone
       keeps instances apart)`);

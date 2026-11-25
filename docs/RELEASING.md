@@ -86,7 +86,7 @@ attestation. Both packages live in subdirectories, so each also sets
 ```json
 "repository": {
   "type": "git",
-  "url": "git+https://github.com/SinishaDjukic/worca-platform.git",
+  "url": "git+https://github.com/worca-org/worca-platform.git",
   "directory": "packages/platform"
 }
 ```
@@ -118,11 +118,11 @@ Publisher** → GitHub Actions:
 
 | Field | Value |
 | --- | --- |
-| Organization / user | `SinishaDjukic` |
+| Organization / user | `worca-org` |
 | Repository | `worca-platform` (the GitHub repo name, as-is) |
 | Workflow filename | `release-npm.yml` |
 | Environment | *(leave empty unless the job declares one)* |
-| Label | `release-npm` |
+| Label | `release-npm (worca-org)` |
 | Allowed actions | tick **Allow npm publish**; leave **Allow npm dist-tag** unticked |
 
 `npm stage publish` is always allowed and cannot be unticked. This is the setup
@@ -130,6 +130,10 @@ Publisher** → GitHub Actions:
 move a dist-tag. See §5 for what that means for `rc`. A new connection shows
 "Pending validation" until the first publish through it, which has to happen
 within about two days.
+
+The repository moved from `SinishaDjukic/worca-platform` to `worca-org/worca-platform` on
+2026-11-25. Each package also still lists the old publisher; delete it once the first publish
+through the new one has validated it.
 
 The registration covers **one package only**: `@worca/platform`'s publisher
 grants nothing to `@worca/create-platform`, even though one workflow publishes

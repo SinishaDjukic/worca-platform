@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The repository moved to [worca-org/worca-platform](https://github.com/worca-org/worca-platform).
+  Old links and clones redirect. Both packages publish from the new repository.
+
 ## @worca/platform 1.0.0-rc.1, @worca/create-platform 1.0.0-rc.1
 
 The first release of the Worca platform as open source: the management platform behind hosted
