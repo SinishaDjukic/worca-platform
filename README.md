@@ -3,7 +3,7 @@
 
 # Worca platform
 
-Run your own hosted [Worca](https://github.com/SinishaDjukic/worca-cc): a multi-tenant management
+Run your own hosted [Worca](https://github.com/worca-org/worca): a multi-tenant management
 platform where organizations sign up, create teams, and run their own Worca instances, each on its
 own subdomain, managed from one console.
 
@@ -61,10 +61,10 @@ step, the token scopes and the costs are in [Deploying your own platform](docs/d
 ## Supported Worca versions
 
 The platform deploys the Worca instance image published by
-[worca-cc](https://github.com/SinishaDjukic/worca-cc). This release supports `@worca/app` **1.9.0
+[worca](https://github.com/worca-org/worca). This release supports `@worca/app` **1.9.0
 or newer**; each release states its range in [CHANGELOG.md](CHANGELOG.md). What an instance is
 made of and what the platform sets on it is worca-cc's
-[instance contract](https://github.com/SinishaDjukic/worca-cc/blob/dev/docs/instance-contract.md):
+[instance contract](https://github.com/worca-org/worca/blob/dev/docs/instance-contract.md):
 build your own management interface on it, or run a single instance with Docker Compose.
 
 ## Packages

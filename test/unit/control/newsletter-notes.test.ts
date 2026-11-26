@@ -7,13 +7,13 @@ const SITE = { linkDomains: ['app.worca.dev', 'worca.run', 'worca.dev'] };
 // GitHub's generated release body, as the release workflow sends it.
 const NOTES = [
   "## What's Changed",
-  '* A stop ends the container with exit 0 by @SinishaDjukic in https://github.com/SinishaDjukic/worca-cc/pull/610',
-  '* Broker key page: `__Host-` CSRF cookie over https by @SinishaDjukic in https://github.com/SinishaDjukic/worca-cc/pull/612',
+  '* A stop ends the container with exit 0 by @SinishaDjukic in https://github.com/worca-org/worca/pull/610',
+  '* Broker key page: `__Host-` CSRF cookie over https by @SinishaDjukic in https://github.com/worca-org/worca/pull/612',
   '',
   '## New Contributors',
-  '* @someone made their first contribution in https://github.com/SinishaDjukic/worca-cc/pull/608',
+  '* @someone made their first contribution in https://github.com/worca-org/worca/pull/608',
   '',
-  '**Full Changelog**: https://github.com/SinishaDjukic/worca-cc/compare/worca-app-v1.9.0...worca-app-v1.9.1',
+  '**Full Changelog**: https://github.com/worca-org/worca/compare/worca-app-v1.9.0...worca-app-v1.9.1',
 ].join('\n');
 
 describe('release notes in newsletter mail', () => {
@@ -23,7 +23,7 @@ describe('release notes in newsletter mail', () => {
     expect(html).toContain("What&#39;s Changed");
     expect((html.match(/<ul/g) ?? []).length).toBe(2);
     expect((html.match(/<li/g) ?? []).length).toBe(3);
-    expect(html).toContain('href="https://github.com/SinishaDjukic/worca-cc/pull/610"');
+    expect(html).toContain('href="https://github.com/worca-org/worca/pull/610"');
     expect(html).toContain('>#610</a>');
     expect(html).toMatch(/<strong[^>]*>Full Changelog<\/strong>/);
     expect(html).toMatch(/<code[^>]*>__Host-<\/code>/);

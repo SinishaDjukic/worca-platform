@@ -3,7 +3,7 @@
 How the platform's packages get published, and what has to be configured — once per
 package, and occasionally afterwards — for that to work.
 
-This is worca-cc's release process ([worca-cc `docs/RELEASING.md`](https://github.com/SinishaDjukic/worca-cc/blob/dev/docs/RELEASING.md)),
+This is worca's release process ([worca `docs/RELEASING.md`](https://github.com/worca-org/worca/blob/dev/docs/RELEASING.md)),
 changed only where this repo differs: it publishes **two packages, each on its own release
 line**, and it has no container image or browser extension. `/worca-release` (in
 `.claude/skills/`) runs the procedure in §4. When worca-cc's process changes, this file changes
