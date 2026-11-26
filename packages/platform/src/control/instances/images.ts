@@ -63,7 +63,7 @@ export const runsHosted = (version: string): boolean => SEMVER.test(version) && 
 // docs/credential-broker.md "Two services from the same image"); the broker differs only by its
 // start command (providers/railway.ts). A deployment can point both at a mirror or its own build
 // (WORCA_IMAGE, a repository without a tag) and pin another cloudflared (CLOUDFLARED_IMAGE).
-export const DEFAULT_WORCA_IMAGE = 'ghcr.io/sinishadjukic/worca';
+export const DEFAULT_WORCA_IMAGE = 'ghcr.io/worca-org/worca';
 export const DEFAULT_CLOUDFLARED_IMAGE = 'cloudflare/cloudflared:2026.10.3';
 
 /** Where a deployment's instance images come from. */

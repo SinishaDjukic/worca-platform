@@ -937,7 +937,7 @@ async function releasesView(ctx) {
         <td class="num">${r.instances}</td>
         ${mayPublish ? html`<td class="pc-nowrap">${recorded(r) ? (r.withdrawn ? html`<button class="btn ghost sm" data-restore="${r.version}">Restore</button>` : html`<button class="btn ghost sm" data-withdraw="${r.version}">Withdraw</button>`) : ''}</td>` : ''}</tr>`)
         : html`<tr><td colspan="${mayPublish ? 5 : 4}" class="empty">No releases recorded.</td></tr>`}</tbody></table></div></div>
-    <p class="hint pc-tight">The latest is <span class="mono">${latest}</span>. Older releases stay deployable; a withdrawn one can't be deployed again until it is restored. Release candidates (<span class="mono">x.y.z-rc.N</span>) are enrolled too but never become the latest: only orgs with release candidates on can pin an instance to one, until its release is out. Each version deploys the image <span class="mono">ghcr.io/sinishadjukic/worca:</span><i>version</i>.</p>
+    <p class="hint pc-tight">The latest is <span class="mono">${latest}</span>. Older releases stay deployable; a withdrawn one can't be deployed again until it is restored. Release candidates (<span class="mono">x.y.z-rc.N</span>) are enrolled too but never become the latest: only orgs with release candidates on can pin an instance to one, until its release is out. Each version deploys the image <span class="mono">ghcr.io/worca-org/worca:</span><i>version</i>.</p>
     ${held.length ? html`<section class="card pc-tablecard" id="pc-held" aria-labelledby="pc-held-h">
       <div class="card-head pc-cardhead"><h2 id="pc-held-h">Not enrolled yet</h2><span class="sub">Versions on npm that automatic enrollment is holding back.</span></div>
       <div class="tablewrap"><table><thead><tr><th>Version</th><th>Why</th><th>Last checked</th></tr></thead>
@@ -1051,8 +1051,8 @@ function newsletterSection(n) {
 }
 
 const PUBLISH_ERRORS = {
-  image_not_found: (v) => `There's no image ghcr.io/sinishadjukic/worca:${v}. Push it first, then publish.`,
-  image_version_mismatch: (v, e) => `The image ghcr.io/sinishadjukic/worca:${v} reports ${e?.body?.reports || 'no version'}: an upgrade to it could never finish. Build the image from the release's own tag.`,
+  image_not_found: (v) => `There's no image ghcr.io/worca-org/worca:${v}. Push it first, then publish.`,
+  image_version_mismatch: (v, e) => `The image ghcr.io/worca-org/worca:${v} reports ${e?.body?.reports || 'no version'}: an upgrade to it could never finish. Build the image from the release's own tag.`,
   release_withdrawn: (v) => `${v} was withdrawn. Restore it from the list instead.`,
   registry_unavailable: () => "Couldn't reach GHCR to check the image. Try again in a minute.",
   invalid_body: () => 'Use a version like 1.8.2.',
@@ -1062,7 +1062,7 @@ function publish(ctx, latest, total) {
     <h2>Publish a Worca version</h2>
     <div class="field"><label for="pc-ver">Version</label>
       <input class="inp mono" id="pc-ver" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="${latest}" pattern="\\d+\\.\\d+\\.\\d+">
-      <span class="hint" id="pc-ver-hint">The image ghcr.io/sinishadjukic/worca with this tag must exist. The latest now is ${latest}.</span></div>
+      <span class="hint" id="pc-ver-hint">The image ghcr.io/worca-org/worca with this tag must exist. The latest now is ${latest}.</span></div>
     <div class="banner blue">${icon('info')}<div class="grow">${total === null ? 'Every instance on another version' : `Up to ${plural(total, 'instance')}`} will show "upgrade available". Nobody is upgraded automatically: each org's admins upgrade when it suits them.</div></div>
     ${alertBox('pc-ver-err')}
     <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn primary" id="pc-ver-go" disabled>Publish</button></div>`);

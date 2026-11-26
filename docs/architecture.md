@@ -108,7 +108,7 @@ is shown to the tenant as phases (see [Instance lifecycle](instance-lifecycle.md
 4. Register both hosts at the gate (KV entries, gate object with status `creating`).
 5. Set the variables: tunnel token, `WORCA_ALLOWED_HOSTS` with the exact host, identity issuer and
    audience, broker settings, heartbeat credential, outbound network policy (D73).
-6. Deploy the image (`ghcr.io/sinishadjukic/worca`; the broker is the same image, D64).
+6. Deploy the image (`ghcr.io/worca-org/worca`; the broker is the same image, D64).
 7. Wait for the first heartbeat, set status `running`, notify the tenant admin.
 
 Deletion, suspension, waking and upgrades are in [Instance lifecycle](instance-lifecycle.md).

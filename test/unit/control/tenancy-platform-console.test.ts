@@ -283,10 +283,10 @@ describe('releases (P10, D77)', () => {
     const res = await call('PUT', '/api/platform/worca-version', { ...as(root), body: { version: '2.0.0' } });
     expect(res.status).toBe(200);
     expect(reg.requests.map((r) => [r.method, r.url])).toEqual([
-      ['GET', 'https://ghcr.io/token?scope=repository:sinishadjukic/worca:pull&service=ghcr.io'],
-      ['GET', 'https://ghcr.io/v2/sinishadjukic/worca/manifests/2.0.0'],
-      ['GET', 'https://ghcr.io/v2/sinishadjukic/worca/manifests/sha256:idx-2.0.0'],
-      ['GET', 'https://ghcr.io/v2/sinishadjukic/worca/blobs/sha256:cfg-2.0.0'],
+      ['GET', 'https://ghcr.io/token?scope=repository:worca-org/worca:pull&service=ghcr.io'],
+      ['GET', 'https://ghcr.io/v2/worca-org/worca/manifests/2.0.0'],
+      ['GET', 'https://ghcr.io/v2/worca-org/worca/manifests/sha256:idx-2.0.0'],
+      ['GET', 'https://ghcr.io/v2/worca-org/worca/blobs/sha256:cfg-2.0.0'],
     ]);
     expect(reg.requests[1]?.headers.get('authorization')).toBe('Bearer anon-token');
     expect(reg.requests[1]?.headers.get('accept')).toContain('application/vnd.oci.image.index.v1+json');

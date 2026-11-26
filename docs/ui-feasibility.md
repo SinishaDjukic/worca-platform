@@ -18,7 +18,7 @@ schema was introspected live.
 
 The product owner's answers to this review (recorded as D61–D65 in [Decisions](decisions.md)):
 
-- **Images:** worca's public image `ghcr.io/sinishadjukic/worca` (the provider pointed at a
+- **Images:** worca's public image `ghcr.io/worca-org/worca` (the provider pointed at a
   non-existent org; fixed).
 - **Railway:** move to Pro within weeks. **DNS:** Pro raises the zone to 3,500 records.
 - **Dropped from the UI:** "waiting for your answer", history widgets (two-week chart, hourly
@@ -113,7 +113,7 @@ T2, T7, T16 and P14 were Ready.
 | P7 | Registration | Ready / Add | Mode, codes, approve and reject exist. Add a **note** and **total uses** (only `uses_left` is stored). Fix approve (bug below). |
 | P8 | Find a user and support actions | Build | Lookup: add a route over the existing blind-index resolver. **"Registered via code X"**: not stored, only from now on. **Last sign-in**: from sessions or audit. **Sign out everywhere, disable** (disabling must also revoke live sessions and gate sessions), **two-person reset** (needs an approvals table): all new. |
 | P9 | Platform audit | Ready / Add | Exists with actor role; add filters. |
-| P10 | Releases | Add | Store release dates (today a bare JSON array) and instance counts. **Image check**: GHCR's anonymous manifest check works against the public `ghcr.io/sinishadjukic/worca`. |
+| P10 | Releases | Add | Store release dates (today a bare JSON array) and instance counts. **Image check**: GHCR's anonymous manifest check works against the public `ghcr.io/worca-org/worca`. |
 | P11 | Staff and roles | Add | The list returns user ids only; decrypt name and email. |
 | P12 | System | Build | Wrapped-key counts: Add. **Master-key rotation is not implemented** (version is the constant `m1`); that is L. Provider counts come from Railway `workspace{projectCount subscriptionPlanLimit}` and Cloudflare `result_info.total_count`. **Latency**: no provider API; time our own calls. **Mail sent today**: our sending-only Resend key can read nothing. Count our own sends, or capture Resend's quota headers on send (documented, unverified). |
 | P13 | Mail quota in the sidebar | Build | As P12. |
@@ -144,7 +144,7 @@ T2, T7, T16 and P14 were Ready.
 
 1. **Images pointed at the wrong place** (fixed 2026-10-06). The provider used
    `ghcr.io/worca-dev/worca` and `worca-broker`, which don't exist. worca publishes one public image,
-   `ghcr.io/sinishadjukic/worca`, and the broker is the same image started with
+   `ghcr.io/worca-org/worca`, and the broker is the same image started with
    `worca-entrypoint worca broker`. Both are now set that way.
 2. **Railway API budget.** Hobby allows 1,000 requests per hour. Polling three services per
    instance runs out at about 30 instances. Status and metrics must come from one workspace-wide

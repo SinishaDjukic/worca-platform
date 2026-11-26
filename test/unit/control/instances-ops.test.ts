@@ -44,7 +44,7 @@ describe('create', () => {
     const vars = stub.calls[1]!.body.variables;
     expect(vars).toMatchObject({ allowedHosts: host, identityAudience: host, keyPageAudience: keyHost, identityIssuer: E.APP_ORIGIN });
     expect(vars.heartbeatUrl).toMatch(/\/api\/heartbeat$/);
-    expect(stub.calls[2]!.body.image).toBe('ghcr.io/sinishadjukic/worca:1.9.0');
+    expect(stub.calls[2]!.body.image).toBe('ghcr.io/worca-org/worca:1.9.0');
 
     const row = (await getInstance(E, id))!;
     expect(row).toMatchObject({ status: 'running', worca_version: '1.9.0', last_error: null });
@@ -134,7 +134,7 @@ describe('upgrade', () => {
       op: 'upgrade', instanceId: i.id, version: '1.9.0',
     });
     expect(r).toEqual({ ok: true, outcome: 'upgraded' });
-    expect(stub.calls.map((c) => c.body?.image)).toEqual(['ghcr.io/sinishadjukic/worca:1.9.0']);
+    expect(stub.calls.map((c) => c.body?.image)).toEqual(['ghcr.io/worca-org/worca:1.9.0']);
     // D68: an upgrade only changes the image; the broker's secret and vault key stay as they are.
     expect(stub.calls.some((c) => c.path.endsWith('/variables'))).toBe(false);
     expect(await instanceRow(i.id)).toMatchObject({ status: 'running', worca_version: '1.9.0' });
@@ -149,7 +149,7 @@ describe('upgrade', () => {
       op: 'upgrade', instanceId: i.id, version: '1.10.0',
     });
     expect(r).toEqual({ ok: false, outcome: 'rolled_back' });
-    expect(stub.calls.map((c) => c.body?.image)).toEqual(['ghcr.io/sinishadjukic/worca:1.10.0', 'ghcr.io/sinishadjukic/worca:1.9.0']);
+    expect(stub.calls.map((c) => c.body?.image)).toEqual(['ghcr.io/worca-org/worca:1.10.0', 'ghcr.io/worca-org/worca:1.9.0']);
     expect(await instanceRow(i.id)).toMatchObject({ status: 'running', last_error: 'upgrade_timeout', target_version: null });
     expect(recorded.mails[0]?.subject).toMatch(/rolled back to 1\.9\.0/);
   });
