@@ -148,7 +148,7 @@ describe('apex and www redirect (D67)', () => {
     const res = await gate(new Request(url, { headers: nav }));
     expect(res.status).toBe(301);
     expect(res.headers.get('location')).toBe(env.APEX_REDIRECT_URL ?? ABOUT_URL);
-    expect(res.headers.get('x-frame-options')).toBe('DENY'); // security headers as everywhere
+    expect(res.headers.get('x-frame-options')).toBe('SAMEORIGIN'); // security headers as everywhere
   });
 
   it('before anything else: no cookie check, no sign-in, any method', async () => {

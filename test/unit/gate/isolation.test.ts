@@ -114,7 +114,6 @@ describe('row 3: cookie flood', () => {
 
 describe('rows 4 and 5: framing and process isolation headers', () => {
   const expected = {
-    'x-frame-options': 'DENY',
     'origin-agent-cluster': '?1',
     'cross-origin-opener-policy': 'same-origin',
     'cross-origin-resource-policy': 'same-origin',
@@ -123,12 +122,41 @@ describe('rows 4 and 5: framing and process isolation headers', () => {
   };
 
   it('on proxied responses, keeping the instance CSP', async () => {
-    up.respond = () => new Response('x', { headers: { 'content-security-policy': "default-src 'self'", 'x-frame-options': 'SAMEORIGIN' } });
+    up.respond = () => new Response('x', { headers: { 'content-security-policy': "default-src 'self'" } });
     const res = await gate(new Request(inst.url('/'), { headers: { cookie } }));
     for (const [k, v] of Object.entries(expected)) expect(res.headers.get(k), k).toBe(v);
     expect(res.headers.get('content-security-policy')).toContain("default-src 'self'");
-    expect(res.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
     expect(res.headers.has('strict-transport-security')).toBe(false); // LOCAL_DEV
+  });
+
+  // worca frames its own pages (the design preview, since 1.19): only other origins are kept out.
+  it('lets an instance frame its own pages, and no other origin', async () => {
+    up.respond = () => new Response('x');
+    const res = await gate(new Request(inst.url('/design-preview/t/build/'), { headers: { cookie } }));
+    expect(res.headers.get('content-security-policy')).toBe("frame-ancestors 'self'");
+    expect(res.headers.get('x-frame-options')).toBe('SAMEORIGIN');
+  });
+
+  // Browsers ignore X-Frame-Options once a CSP has frame-ancestors, so the gate says 'none' in the CSP too.
+  it('keeps a page the instance forbids framing unframeable', async () => {
+    up.respond = () => new Response('x', { headers: { 'x-frame-options': 'deny ' } });
+    const denied = await gate(new Request(inst.url('/'), { headers: { cookie } }));
+    expect(denied.headers.get('x-frame-options')).toBe('DENY');
+    expect(denied.headers.get('content-security-policy')).toBe("frame-ancestors 'none'");
+  });
+
+  it('reads a repeated DENY as DENY', async () => {
+    up.respond = () => new Response('x', { headers: [['x-frame-options', 'DENY'], ['x-frame-options', 'DENY']] });
+    const res = await gate(new Request(inst.url('/'), { headers: { cookie } }));
+    expect(res.headers.get('x-frame-options')).toBe('DENY');
+    expect(res.headers.get('content-security-policy')).toBe("frame-ancestors 'none'");
+  });
+
+  it('never allows more than the same origin', async () => {
+    up.respond = () => new Response('x', { headers: { 'x-frame-options': 'ALLOWALL' } });
+    const loose = await gate(new Request(inst.url('/'), { headers: { cookie } }));
+    expect(loose.headers.get('x-frame-options')).toBe('SAMEORIGIN');
+    expect(loose.headers.get('content-security-policy')).toBe("frame-ancestors 'self'");
   });
 
   it('on the gate own pages and redirects', async () => {
@@ -137,9 +165,10 @@ describe('rows 4 and 5: framing and process isolation headers', () => {
     for (const res of [page, redirect]) {
       for (const [k, v] of Object.entries(expected)) expect(res.headers.get(k), k).toBe(v);
     }
-    expect(redirect.headers.get('content-security-policy')).toBe("frame-ancestors 'none'");
-    // Own pages add their strict page CSP (pages.ts); frame-ancestors stays.
+    expect(redirect.headers.get('content-security-policy')).toBe("frame-ancestors 'self'");
+    // Own pages are never framed, by anyone: their strict page CSP (pages.ts) says so.
     expect(page.headers.get('content-security-policy')).toMatch(/^default-src 'none'; style-src 'nonce-[^']+';.*frame-ancestors 'none'.*, frame-ancestors 'none'$/);
+    expect(page.headers.get('x-frame-options')).toBe('DENY');
   });
 
   it('adds HSTS with includeSubDomains outside local dev', async () => {

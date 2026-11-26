@@ -10,15 +10,19 @@ import { instanceFetch, instanceFixture, jwtPayload, signInToInstance } from './
 const skip = await skipUnlessUp();
 
 const SECURITY_HEADERS = {
-  'x-frame-options': /^DENY$/i,
-  'content-security-policy': /frame-ancestors 'none'/,
   'origin-agent-cluster': /^\?1$/,
   'cross-origin-opener-policy': /^same-origin$/,
   'cross-origin-resource-policy': /^same-origin$/,
 };
+// What the gate forwards or answers without a page can be framed by its own origin only (worca's design preview);
+// the gate's own pages by nobody.
+const FRAMING = {
+  sameOrigin: { 'x-frame-options': /^SAMEORIGIN$/, 'content-security-policy': /(^|, )frame-ancestors 'self'$/ },
+  nobody: { 'x-frame-options': /^DENY$/, 'content-security-policy': /frame-ancestors 'none'.*, frame-ancestors 'none'$/ },
+};
 
-function assertSecurityHeaders(res, what) {
-  for (const [name, re] of Object.entries(SECURITY_HEADERS)) {
+function assertSecurityHeaders(res, what, framing) {
+  for (const [name, re] of Object.entries({ ...SECURITY_HEADERS, ...FRAMING[framing] })) {
     assert.match(res.header(name) ?? '', re, `${what}: ${name} (${res.status})`);
   }
 }
@@ -106,11 +110,11 @@ describe('gate isolation', { skip }, () => {
   });
 
   it('security headers on proxied responses and on the gate\'s own pages', async () => {
-    assertSecurityHeaders(await instanceFetch(user, a.inst.host, '/page'), 'proxied');
-    assertSecurityHeaders(await instanceFetch(user, a.inst.host, '/x', { method: 'POST', body: {}, from: originB }), 'cross-origin refusal');
+    assertSecurityHeaders(await instanceFetch(user, a.inst.host, '/page'), 'proxied', 'sameOrigin');
+    assertSecurityHeaders(await instanceFetch(user, a.inst.host, '/x', { method: 'POST', body: {}, from: originB }), 'cross-origin refusal', 'sameOrigin');
     const redirect = await user.browser.fetch(`${originB}/`, { navigate: true });
     assert.equal(redirect.status, 302);
-    assertSecurityHeaders(redirect, 'sign-in redirect');
+    assertSecurityHeaders(redirect, 'sign-in redirect', 'sameOrigin');
   });
 
   it("a session for A is no session for B (cookies are per host)", async () => {
@@ -139,6 +143,6 @@ describe('gate request sanity (no sign-in needed)', { skip }, () => {
   it('unknown hosts get the gate\'s 404 page with the security headers', async () => {
     const res = await request(`http://unknown0000.${INSTANCE_DOMAIN}:${GATE_PORT}/`);
     assert.equal(res.status, 404);
-    assertSecurityHeaders(res, 'unknown host');
+    assertSecurityHeaders(res, 'unknown host', 'nobody');
   });
 });
